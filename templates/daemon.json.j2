@@ -1,0 +1,18 @@
+{
+{% if docker_enable_prometheus_exporter %}
+  "metrics-addr" : "0.0.0.0:9323",
+  "experimental" : true,
+{% endif %}
+{% if docker_enable_loki %}
+  "log-driver": "loki",
+  "log-opts": {
+    "loki-url": "http://{% if docker_loki_host is defined and docker_loki_host|length %}{{ docker_loki_host }}{% else %}127.0.0.1{% endif %}:{% if docker_loki_port is defined and docker_loki_port|length %}{{ docker_loki_port}}{% else %}3100{% endif %}/loki/api/v1/push",
+    "loki-batch-size": "400"
+  },
+{% endif %}
+  "log-opts": {
+    "tag": "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
+  },
+  "debug" : false
+}
+

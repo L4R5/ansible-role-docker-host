@@ -1,0 +1,23 @@
+- name: install docker package
+  package:
+    name: docker.io
+    state: present
+
+# docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions
+
+- name: install loki logging drive
+  community.docker.docker_plugin:
+    plugin_name: grafana/loki-docker-driver:latest
+    state: enable
+    alias: loki
+  when: docker_enable_loki
+
+- name: configure docker daemon
+  template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+    mode: 0600
+    owner: root
+    group: root
+  notify: restart docker daemon
+
